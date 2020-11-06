@@ -12,13 +12,9 @@ def download_file(url, filename):
             for chunk in r.iter_content(chunk_size=8192):
                 f.write(chunk)
 
-if len(sys.argv) < 3:
-    print('Usage: {0} token login curator_id'.format(sys.argv[0]))
-    exit()
-
-token = sys.argv[1]
-login = sys.argv[2]
-curator_id = sys.argv[3]
+login = input('Login: ')
+token = input('Token: ')
+curator_id = input('ID: ')
 url = 'https://gql.twitch.tv/gql'
 headers = {'Authorization': 'OAuth ' + token}
 payload = '[{"operationName":"ClipsManagerTable_User","variables":{"login":"' + login + '","limit":20,"criteria":{"sort":"CREATED_AT_DESC","period":"ALL_TIME","curatorID":"' + curator_id + '"}},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"0bc0fef26eb0739611d8ac1aa754ed44630d96a87854525bf38520ffe26460d4"}}}]'
