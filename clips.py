@@ -12,10 +12,16 @@ def download_file(url, filename):
             for chunk in r.iter_content(chunk_size=8192):
                 f.write(chunk)
 
+if len(sys.argv) < 3:
+    print('Usage: {0} token login curator_id'.format(sys.argv[0]))
+    exit()
+
 token = sys.argv[1]
+login = sys.argv[2]
+curator_id = sys.argv[3]
 url = 'https://gql.twitch.tv/gql'
 headers = {'Authorization': 'OAuth ' + token}
-payload = '[{"operationName":"ClipsManagerTable_User","variables":{"login":"flaffen_twitch","limit":20,"criteria":{"sort":"CREATED_AT_DESC","period":"ALL_TIME","curatorID":"130825235"}},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"0bc0fef26eb0739611d8ac1aa754ed44630d96a87854525bf38520ffe26460d4"}}}]'
+payload = '[{"operationName":"ClipsManagerTable_User","variables":{"login":"' + login + '","limit":20,"criteria":{"sort":"CREATED_AT_DESC","period":"ALL_TIME","curatorID":"' + curator_id + '"}},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"0bc0fef26eb0739611d8ac1aa754ed44630d96a87854525bf38520ffe26460d4"}}}]'
 
 r = requests.post(url, headers=headers, data=payload)
 
@@ -24,7 +30,7 @@ edges = r.json()[0]['data']['user']['clips']['edges']
 cursor = edges[-1]['cursor']
 
 while cursor != None:
-    payload = '[{"operationName":"ClipsManagerTable_User","variables":{"login":"flaffen_twitch","limit":20,"criteria":{"sort":"CREATED_AT_DESC","period":"ALL_TIME","curatorID":"130825235"},"cursor":"' + cursor + '"},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"0bc0fef26eb0739611d8ac1aa754ed44630d96a87854525bf38520ffe26460d4"}}}]'
+    payload = '[{"operationName":"ClipsManagerTable_User","variables":{"login":"' + login + '","limit":20,"criteria":{"sort":"CREATED_AT_DESC","period":"ALL_TIME","curatorID":"' + curator_id + '"},"cursor":"' + cursor + '"},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"0bc0fef26eb0739611d8ac1aa754ed44630d96a87854525bf38520ffe26460d4"}}}]'
     r = requests.post(url, headers=headers, data=payload)
     new_edges = r.json()[0]['data']['user']['clips']['edges']
     edges += new_edges
